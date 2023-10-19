@@ -10,3 +10,5 @@ typechain-types
 cache
 artifacts
 
+# Created from image conversion to text
+eng.traineddata
