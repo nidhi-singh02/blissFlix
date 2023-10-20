@@ -2,14 +2,21 @@ import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import SismoConnect from "./sismoConnect";
+import { useAccountAbstraction } from "./store/accountAbstractionContext";
 
 export default function ConnectWallet() {
+  const { loginWeb3Auth } = useAccountAbstraction();
   const [open, setOpen] = useState(true);
   const [state, setState] = useState(false);
 
   return (
     <div>
-      <button onClick={() => setState(true)}>Connect wallet</button>
+      <button
+        onClick={() => setState(true)}
+        className="rounded-full bg-bliss-pink px-3.5 py-2.5 text-sm font-krona text-bliss-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
+      >
+        Connect Wallet
+      </button>
       {state && (
         <Transition.Root show={open} as={Fragment}>
           <Dialog as="div" className="relative z-10" onClose={setOpen}>
@@ -39,7 +46,13 @@ export default function ConnectWallet() {
                   <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
                     <div>
                       <div className="mt-3 text-center sm:mt-5">
-                        <SismoConnect/>
+                        <SismoConnect />
+                        <button
+                          onClick={loginWeb3Auth}
+                          className="w-[20rem] mt-6 border border-black px-3.5 py-2.5 text-sm text-bliss-black shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
+                        >
+                          Safe Connect Wallet
+                        </button>
                       </div>
                     </div>
                     <div className="mt-5 sm:mt-6">
