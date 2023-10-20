@@ -14,7 +14,16 @@ async function main() {
   const zkyc = await ethers.deployContract("ZKYCVerified",["0x2546BcD3c84621e976D8185a91A922aE77ECEc30"],deployer);
   console.log("zkyc contract is deployed to address:", await zkyc.getAddress());
 
+  const erc20 = await ethers.deployContract("SimpleERC20",["ApeCoin", "APE"],deployer);
+  erc20Address =  await erc20.getAddress()
+  console.log("erc20 contract is deployed to address:",erc20Address);
+
+  const content = await ethers.deployContract("Content",[erc20Address],deployer);
+  contentAddress =  await content.getAddress()
+  console.log("content contract is deployed to address:",contentAddress);
+  
 }
+
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
@@ -22,4 +31,5 @@ main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+
 
