@@ -72,8 +72,19 @@ export const sepoliaTestnet: Chain = {
   faucetUrl: 'https://faucet.quicknode.com/base/goerli'
 }
 
+export const etheruem: Chain = {
+  id: '0x1',
+  token: 'ETH',
+  shortName: 'ETH',
+  label: 'Ethereum Mainnet',
+  rpcUrl: 'https://eth.llamarpc.com',
+  blockExplorerUrl: 'https://etherscan.io',
+  color: '#8248E5',
+  isStripePaymentsEnabled: true,
+  faucetUrl: 'https://faucet.quicknode.com/base/goerli'
+}
 const chains: Chain[] = [modeChain, baseGoerli, optimismGoerli, sepoliaTestnet]
 
-export var initialChain = optimismGoerli
+export var initialChain = etheruem
 
 export default chains
