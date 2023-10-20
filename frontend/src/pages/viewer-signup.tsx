@@ -24,7 +24,7 @@ export default function CreatorSignup() {
   const [signals, setSignals] = useState("");
   const [isValid, setIsValid] = useState(false);
 
-  const prevKey = process.env.NEXT_PUBLIC_PRV_KEY;
+  const prevKey: any = process.env.NEXT_PUBLIC_PRV_KEY;
   
   useEffect(() => {
     console.log("ageVerification", ageVerification);
