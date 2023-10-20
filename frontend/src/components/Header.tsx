@@ -4,6 +4,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useAccountAbstraction } from "../components/store/accountAbstractionContext";
 import ConnectedWalletLabel from "../components/Wallet/ConnectedWalletLabel";
 import SafeInfo from "../components/Wallet/SafeInfo";
+import ConnectWallet from "../components/walletConnect";
 import Link from "next/link";
 
 export default function Header() {
@@ -31,6 +32,7 @@ export default function Header() {
               alt=""
             /> */}
           </Link>
+          <ConnectWallet/>
         </div>
         <div className="flex lg:hidden">
           <button
