@@ -5,8 +5,11 @@ coverage
 coverage.json
 typechain
 typechain-types
+.DS_Store
 
 # Hardhat files
 cache
 artifacts
 
+# Created from image conversion to text
+eng.traineddata
