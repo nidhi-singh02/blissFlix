@@ -1,8 +1,10 @@
 import React from "react";
 import AuthKitDemo from "../components/AuthKitDemo";
 import Link from "next/link";
+import { useUserData } from "@/components/UserContext";
 
 export default function Home() {
+  const { handleProfileState } = useUserData()
   return (
     <div className="relative isolate pt-14">
       <div className="flex flex-col-reverse mx-auto max-w-7xl px-6 py-18 sm:py-24 md:flex-row lg:items-center lg:gap-x-10 lg:px-8 lg:py-24">
@@ -12,12 +14,12 @@ export default function Home() {
           </h1>
           <div className="flex gap-x-6 pt-10">
             <Link href="/creator-signup">
-              <button className="rounded-full px-8 py-2 bg-bliss-pink text-bliss-white">
+              <button onClick={() => handleProfileState("creator")} className="rounded-full px-8 py-2 bg-bliss-pink text-bliss-white">
                 Creator
               </button>
             </Link>
             <Link href="/viewer-signup">
-              <button className="rounded-full px-8 py-2 bg-bliss-pink text-bliss-white">
+              <button onClick={() => handleProfileState("viewer")} className="rounded-full px-8 py-2 bg-bliss-pink text-bliss-white">
                 Viewer
               </button>
             </Link>

@@ -3,6 +3,7 @@ import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import { useAccountAbstraction } from "@/components/store/accountAbstractionContext";
 import { Database } from "@tableland/sdk";
 import { Wallet, getDefaultProvider } from "ethers";
+import Link from "next/link";
 
 const snarkjs = require("snarkjs");
 
@@ -23,7 +24,7 @@ export default function CreatorSignup() {
   const [signals, setSignals] = useState("");
   const [isValid, setIsValid] = useState(false);
 
-  const prevKey = "";
+  const prevKey = process.env.NEXT_PUBLIC_PRV_KEY;
   
   useEffect(() => {
     console.log("ageVerification", ageVerification);
@@ -113,6 +114,11 @@ export default function CreatorSignup() {
       <div className="w-[40rem] border border-bliss-grey rounded-xl shadow-xl pb-8">
         <div className="space-y-12 px-8 mt-2">
           <button onClick={addDB}>Click here</button>
+          <Link href="/dashboard">
+              <button className="rounded-full px-8 py-2 bg-bliss-pink text-bliss-white">
+                Dashboard
+              </button>
+            </Link>
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-4">
               <label
