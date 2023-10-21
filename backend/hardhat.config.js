@@ -1,6 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox");
 require('dotenv').config();
-const PRIVATE_KEY = process.env.SEPOLIA_PRIVATE_KEY;
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -16,6 +16,14 @@ module.exports = {
     },
     filecoin:{
       url : process.env.FILECOIN_API_URL,
+      accounts: [PRIVATE_KEY]
+    },
+    mantle : {
+      url : process.env.MANTLE_API_URL,
+      accounts : [PRIVATE_KEY]
+    },
+    goerli: {
+      url: process.env.GOERLI_API_URL,
       accounts: [PRIVATE_KEY]
     }
   }
