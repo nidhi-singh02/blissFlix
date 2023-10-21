@@ -1,8 +1,12 @@
 {
   "dependencies": {
+    "@glif/filecoin-address": "^2.0.43",
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
     "@openzeppelin/contracts": "^5.0.0",
+    "@tableland/local": "^2.0.2",
+    "@tableland/sdk": "^4.5.3-dev.0",
     "dotenv": "^16.3.1",
+    "ethers": "^5.7.2",
     "rembrandt": "^0.1.3",
     "tesseract.js": "^5.0.2"
   },
