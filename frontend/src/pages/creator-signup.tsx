@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useAccountAbstraction } from "@/components/store/accountAbstractionContext";
 import Web3 from "web3";
 import NFTABI from "../abi/nft.json";
 import { pinJSONToIPFS } from "@/utils/nftPinata";
+import Link from "next/link";
+import { useUserData } from "@/components/UserContext";
 const { Database } = require("@tableland/sdk");
 const { Wallet, ethers } = require("ethers");
 const dotenv = require("dotenv");
@@ -23,7 +25,7 @@ export default function CreatorSignup() {
     web3Provider,
     ownerAddress,
   } = useAccountAbstraction();
-
+   const {setShowNft} = useUserData()
   const [verfiyLoding, setVerifyLoding] = useState(false);
   const [userDetails, setUserDetails] = useState<any>({
     wallet: "",
@@ -40,6 +42,7 @@ export default function CreatorSignup() {
   const [signals, setSignals] = useState("");
   const [isValid, setIsValid] = useState(false);
   const [userData, setUserData] = useState();
+  const [successState, setSuccessState] = useState(false);
   const providerData: any = web3Provider;
   const web3: any = new Web3(providerData?.provider);
 
@@ -133,6 +136,7 @@ export default function CreatorSignup() {
   })
 
   const mintNFT = async () => {
+    setShowNft(true)
     const estimatedGasPriceFromWeb3 = await web3.eth.getGasPrice();
     const metadata: any = new Object();
     metadata.name = ownerAddress;
@@ -149,28 +153,26 @@ export default function CreatorSignup() {
     const tokenURI = pinataResponse.pinataUrl;
     handleCreatorDetails("member", true);
     handleCreatorDetails("cid", pinataResponse.cid)
-    if(tokenURI) {
-      await NftContract.methods
-      .safeMint(ownerAddress, tokenURI)
-      .send({
-        from: ownerAddress,
-        gasPrice: estimatedGasPriceFromWeb3,
-      })
-      .on("transactionHash", async (hash: any) => {
-        console.log("hash", hash)
-      })
-      .on("receipt", function (receipt: any) {
-        console.log("receipt", receipt);
-      })
-      .on("error", function (error: any) {
-        console.log("error", error);
-      });
-    }
+    // if(tokenURI) {
+    //   await NftContract.methods
+    //   .safeMint(ownerAddress, tokenURI)
+    //   .send({
+    //     from: ownerAddress,
+    //     gasPrice: estimatedGasPriceFromWeb3,
+    //   })
+    //   .on("transactionHash", async (hash: any) => {
+    //     console.log("hash", hash)
+    //   })
+    //   .on("receipt", function (receipt: any) {
+    //     console.log("receipt", receipt);
+    //   })
+    //   .on("error", function (error: any) {
+    //     console.log("error", error);
+    //   });
+    // }
   }
 
-  useEffect(() => {
-    userDetails.member == true && addDB()
-  }, [userDetails.member])
+ 
 
   const infuraProvider = new ethers.providers.InfuraProvider(network, process.env.NEXT_PUBLIC_INFURA);
   const signer = wallet.connect(infuraProvider);
@@ -191,6 +193,7 @@ export default function CreatorSignup() {
       // testing`run` here
     )
     .run();
+    setSuccessState(true)
 
     try {
       await meta.txn?.wait();
@@ -200,17 +203,16 @@ export default function CreatorSignup() {
  
   }
 
+  useEffect(() => {
+    userDetails.member == true && addDB()
+  }, [userDetails.member])
+
 
   return (
     <div className="flex justify-center pt-20">
       <div className="w-[40rem] bg-white border border-bliss-grey rounded-xl shadow-xl pb-8">
         <div className="space-y-12 px-8 mt-2">
           <h1 className="text-bliss-black text-center pt-4 font-bold text-xl">Creator Signup/Login</h1>
-          {/* <Link href="/dashboard">
-            <button className="rounded-full px-8 py-2 bg-bliss-pink text-bliss-white">
-              Dashboard
-            </button>
-          </Link> */}
           <div className="mt-10">
             <div className="w-full">
               <label
@@ -326,13 +328,18 @@ export default function CreatorSignup() {
 
         {isAuthenticated && (
           <div className="mt-6 flex items-center justify-end gap-x-6 px-8">
-            <button
+            {successState ? <Link
+              href="/dashboard"
+              className="rounded-full text-center w-32 bg-green-700 px-3 py-2 text-sm font-semibold text-bliss-white shadow-sm hover:bg-opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              Sucess
+            </Link>:  <button
               type="submit"
               onClick={handleSubmit}
               className="rounded-full w-32 bg-bliss-pink px-3 py-2 text-sm font-semibold text-bliss-white shadow-sm hover:bg-opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Verify
-            </button>
+            </button>}
           </div>
         )}
       </div>

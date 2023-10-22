@@ -14,6 +14,7 @@ const AppContext: React.FC<Props> = ({ children }: any) => {
   const { web3Provider, ownerAddress, chain }: any = useAccountAbstraction();
   const web3: any = new Web3(web3Provider?.provider);
   const [profileState, setProfileState] = useState("");
+  const [showNft, setShowNft] = useState(false);
 
   const handleProfileState = (value: any) => {
     setProfileState(value)
@@ -24,7 +25,9 @@ const AppContext: React.FC<Props> = ({ children }: any) => {
       value={{
         setProfileState,
         profileState,
-        handleProfileState
+        handleProfileState,
+        setShowNft,
+        showNft
       }}
     >
       {children}

@@ -6,6 +6,8 @@ import ConnectedWalletLabel from "../components/Wallet/ConnectedWalletLabel";
 import SafeInfo from "../components/Wallet/SafeInfo";
 import ConnectWallet from "../components/walletConnect";
 import Link from "next/link";
+import { useUserData } from "./UserContext";
+import NFTMembership from "../components/walletConnect";
 
 export default function Header() {
   const {
@@ -15,7 +17,9 @@ export default function Header() {
     chainId,
     logoutWeb3Auth,
   } = useAccountAbstraction();
+   const {showNft} = useUserData()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   return (
     <header className="relative inset-x-0 top-0 max-w-7xl mx-auto z-50">
@@ -23,6 +27,7 @@ export default function Header() {
         className="flex items-center justify-between p-6 lg:px-8"
         aria-label="Global"
       >
+        {open && <NFTMembership/>}
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Your Company</span>
@@ -59,6 +64,11 @@ export default function Header() {
             </>
           )}
         </div>
+        {showNft && <div className="pl-10">
+          <button onClick={() => setOpen(true)}>
+            Membrship Nft
+          </button>
+        </div>}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end items-center">
           {!isAuthenticated && <div className="flex items-center gap-x-6">
             <button
