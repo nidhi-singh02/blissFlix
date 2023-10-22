@@ -2,12 +2,13 @@ import * as LitJsSdk from "lit-js-sdk";
 var axios = require("axios");
 require("dotenv").config();
 
-export async function handleDatatoCid(data: any, chain: any) {
+export async function handleDatatoCid(data, chain) { 
+   
   const accessControlConditions = [
     {
-      contractAddress: "",
+      contractAddress: "0x53206A03fd037A85EFaeD3019Faa8C0649F21169",
       standardContractType: "",
-      chain: "ethereum",
+      chain: "goerli",
       method: "eth_getBalance",
       parameters: [":userAddress", "latest"],
       returnValueTest: {
@@ -27,7 +28,8 @@ export async function handleDatatoCid(data: any, chain: any) {
         Authorization: AUTH,
       },
     })
-    .then((response: any) => {});
+    .then((response) => {console.log("response", response);
+    });
 
   var cid = "";
   const cid_data = await axios
@@ -37,9 +39,10 @@ export async function handleDatatoCid(data: any, chain: any) {
         Authorization: AUTH,
       },
     })
-    .then((response: any) => {
+    .then((response) => {
       cid = response.data.IpfsHash;
-    });
+      
+    })
   const cid_xx = await cid_data;
   const litNodeClient = new LitJsSdk.LitNodeClient({
     litNetwork: "serrano",
@@ -47,37 +50,36 @@ export async function handleDatatoCid(data: any, chain: any) {
   await litNodeClient.connect();
   var encryptedString;
   var encryptedSymmetricKey;
-  try {
-    const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
-    const str = "heyencryptdata";
-    const json = JSON.stringify({ key: cid });
-    const blobData = new Blob([json], { type: "text/plain;charset=utf-8" });
-    const res = await LitJsSdk.encrypt(blobData);
-    encryptedString = res.encryptedString;
-    let symmetricKey = res.symmetricKey;
-    encryptedSymmetricKey = await litNodeClient.saveEncryptionKey({
-      accessControlConditions,
-      symmetricKey: symmetricKey,
-      authSig: authSig,
-      chain: "ethereum",
-    });
-  } catch (error) {
-    console.log("error", error);
+  if(!cid) {
+    try {
+      const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
+      const res = await LitJsSdk.encryptString(cid);
+      encryptedString = res.encryptedString;
+      let symmetricKey = res.symmetricKey;
+      encryptedSymmetricKey = await litNodeClient.saveEncryptionKey({
+        accessControlConditions,
+        symmetricKey: symmetricKey,
+        authSig: authSig,
+        chain: "goerli",
+      });
+    } catch (error) {
+      console.log("error", error);
+    }
   }
   return { encryptedSymmetricKey, cid, encryptedString };
 }
 
 export async function getIpfsData(
-  cid: any,
-  chain: any,
-  encryptData: any,
-  baseData: any
+  cid,
+  chain,
+  encryptData,
+  baseData
 ) {
   const accessControlConditions = [
     {
-      contractAddress: "",
+      contractAddress: "0x53206A03fd037A85EFaeD3019Faa8C0649F21169",
       standardContractType: "",
-      chain,
+      chain: "goerli",
       method: "eth_getBalance",
       parameters: [":userAddress", "latest"],
       returnValueTest: {

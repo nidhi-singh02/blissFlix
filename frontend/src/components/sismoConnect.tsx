@@ -1,5 +1,5 @@
 "use client";
-import { useAccount, useConnect } from "wagmi";
+// import { useAccount, useConnect } from "wagmi";
 import { SismoConnectConfig } from "@sismo-core/sismo-connect-react";
 
 const sismoConnectConfig: SismoConnectConfig = {
@@ -7,13 +7,13 @@ const sismoConnectConfig: SismoConnectConfig = {
 };
 
 export default function SismoConnect() {
-  const { connect, connectors, isLoading, pendingConnector } = useConnect();
-  const { isConnected, address } = useAccount();
+  // const { connect, connectors, isLoading, pendingConnector } = useConnect();
+  // const { isConnected, address } = useAccount();
 
   return (
     <>
       <main>
-        {!isConnected && (
+        {/* {!isConnected && (
           <>
             {connectors.map((connector: any) => (
               <button
@@ -28,7 +28,7 @@ export default function SismoConnect() {
               </button>
             ))}
           </>
-        )}
+        )} */}
       </main>
     </>
   );

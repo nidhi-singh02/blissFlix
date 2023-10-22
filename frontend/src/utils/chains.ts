@@ -23,7 +23,6 @@ export const goerliChain: Chain = {
   transactionServiceUrl: 'https://safe-transaction-goerli.safe.global',
   isStripePaymentsEnabled: false
 }
-
 export const modeChain: Chain = {
   id: '0x397',
   token: 'ETH',
@@ -83,8 +82,9 @@ export const etheruem: Chain = {
   isStripePaymentsEnabled: true,
   faucetUrl: 'https://faucet.quicknode.com/base/goerli'
 }
-const chains: Chain[] = [modeChain, baseGoerli, optimismGoerli, sepoliaTestnet]
 
-export var initialChain = etheruem
+const chains: Chain[] = [modeChain, baseGoerli, optimismGoerli, goerliChain, sepoliaTestnet]
+
+export var initialChain = sepoliaTestnet
 
 export default chains

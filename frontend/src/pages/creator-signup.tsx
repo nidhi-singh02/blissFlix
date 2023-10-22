@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useAccountAbstraction } from "@/components/store/accountAbstractionContext";
-import Link from "next/link";
+import Web3 from "web3";
+import NFTABI from "../abi/nft.json";
+import { pinJSONToIPFS } from "@/utils/nftPinata";
+const { Database } = require("@tableland/sdk");
+const { Wallet, ethers } = require("ethers");
+const dotenv = require("dotenv");
+dotenv.config();
+const privateKey = process.env.NEXT_PUBLIC_PRV_KEY;
+const wallet = new Wallet(privateKey);
+const network = "sepolia";
 const snarkjs = require("snarkjs");
 
 export default function CreatorSignup() {
@@ -11,18 +20,32 @@ export default function CreatorSignup() {
     safeSelected,
     chainId,
     logoutWeb3Auth,
+    web3Provider,
+    ownerAddress,
   } = useAccountAbstraction();
+
   const [verfiyLoding, setVerifyLoding] = useState(false);
-  const [userDetails, setUserDetails] = useState<any>();
+  const [userDetails, setUserDetails] = useState<any>({
+    wallet: "",
+    name: "",
+    age: "",
+    profile: "",
+    cid: "",
+    member: false
+  });
   const [ageNumber, setAgeNumber] = useState<any>();
+  const [base64Image, setBase64Image] = useState<any>('');
   const [ageVerification, setAgeVerification] = useState<boolean>(false);
   const [proof, setProof] = useState("");
   const [signals, setSignals] = useState("");
   const [isValid, setIsValid] = useState(false);
-  
-  useEffect(() => {
-    console.log("ageVerification", ageVerification);
-  }, [ageVerification])
+  const [userData, setUserData] = useState();
+  const providerData: any = web3Provider;
+  const web3: any = new Web3(providerData?.provider);
+
+  const NftContract: any =
+    chainId &&
+    new web3.eth.Contract(NFTABI, "0xA72447714BF764Ef28Bc21F1C7597D178Bf11d36");
 
   const makeProof = async (_proofInput: any, _wasm: string, _zkey: string) => {
     const { proof, publicSignals } = await snarkjs.groth16.fullProve(
@@ -45,6 +68,7 @@ export default function CreatorSignup() {
     const res = await snarkjs.groth16.verify(vkey, signals, proof);
     setVerifyLoding(false);
     if (res === true) {
+      handleCreatorDetails("age", true)
       setAgeVerification(true);
       return "Verification OK";
     } else {
@@ -53,14 +77,11 @@ export default function CreatorSignup() {
     }
   };
 
-  async function zkProofCall() {
-    console.log("calling.....", userDetails);
-    console.log("ageNumber", ageNumber);
-
+  async function zkProofCall(value: any) {
     setVerifyLoding(true);
-    userDetails === ageNumber
+    ageNumber === value
       ? makeProof(
-          { age: Number(ageNumber), ageLimit: Number(userDetails) },
+          { age: Number(value), ageLimit: Number(value) },
           "/zkProof/ageCheck.wasm",
           "/zkProof/ageCheck_0001.zkey"
         ).then(({ proof: _proof, publicSignals: _signals }) => {
@@ -75,17 +96,123 @@ export default function CreatorSignup() {
       : setAgeVerification(false);
   }
 
+  const handleCreatorDetails = (key: any, val: any) => {
+    setUserDetails((prevState: any) => ({
+      ...prevState,
+      [key]: val,
+    }));
+  };
+
+  useEffect(() => {
+    if(ageNumber) {
+      zkProofCall(ageNumber)
+      handleCreatorDetails("wallet", ownerAddress)
+      handleCreatorDetails("profile", "creator")
+    }
+
+  }, [ageNumber])
+
+  const handleSubmit = async () => {
+    if(ageVerification) {
+      mintNFT()
+    }
+  }
+
+  useEffect(() => {
+    const imagePath = 'membership.jpeg';
+    fetch(imagePath)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64String = reader.result;
+          setBase64Image(base64String);
+        };
+        reader.readAsDataURL(blob);
+      });
+  })
+
+  const mintNFT = async () => {
+    const estimatedGasPriceFromWeb3 = await web3.eth.getGasPrice();
+    const metadata: any = new Object();
+    metadata.name = ownerAddress;
+    metadata.image = base64Image;
+    metadata.description = "Creator Membership";
+    //make pinata call
+    const pinataResponse = await pinJSONToIPFS(metadata);
+    if (!pinataResponse.success) {
+      return {
+        success: false,
+        status: "😢 Something went wrong while uploading your tokenURI.",
+      };
+    }
+    const tokenURI = pinataResponse.pinataUrl;
+    handleCreatorDetails("member", true);
+    handleCreatorDetails("cid", pinataResponse.cid)
+    if(tokenURI) {
+      await NftContract.methods
+      .safeMint(ownerAddress, tokenURI)
+      .send({
+        from: ownerAddress,
+        gasPrice: estimatedGasPriceFromWeb3,
+      })
+      .on("transactionHash", async (hash: any) => {
+        console.log("hash", hash)
+      })
+      .on("receipt", function (receipt: any) {
+        console.log("receipt", receipt);
+      })
+      .on("error", function (error: any) {
+        console.log("error", error);
+      });
+    }
+  }
+
+  useEffect(() => {
+    userDetails.member == true && addDB()
+  }, [userDetails.member])
+
+  const infuraProvider = new ethers.providers.InfuraProvider(network, process.env.NEXT_PUBLIC_INFURA);
+  const signer = wallet.connect(infuraProvider);
+  const db = new Database({ signer });
+
+  const getDB = async () => {
+    const tableName = `creator_11155111_189`;  
+    const stmt = db.prepare(`SELECT * FROM ${tableName};`);
+    const getAllData = await stmt.all()
+    setUserData(getAllData.results);
+  }
+
+  const addDB = async () => {
+    const name = "creator_details_11155111_310"
+    const { meta } = await db
+    .prepare(
+      `INSERT INTO ${name} (wallet, name, age, profile, cid, member) VALUES (${userDetails.wallet}, ${userDetails.name}, ${userDetails.age}, ${userDetails.profile}, ${userDetails.cid}, ${userDetails.member});`
+      // testing`run` here
+    )
+    .run();
+
+    try {
+      await meta.txn?.wait();
+    }catch (error) {
+      console.log("error");
+    }
+ 
+  }
+
+
   return (
     <div className="flex justify-center pt-20">
-      <div className="w-[40rem] border border-bliss-grey rounded-xl shadow-xl pb-8">
+      <div className="w-[40rem] bg-white border border-bliss-grey rounded-xl shadow-xl pb-8">
         <div className="space-y-12 px-8 mt-2">
-        <Link href="/dashboard">
-              <button className="rounded-full px-8 py-2 bg-bliss-pink text-bliss-white">
-                Dashboard
-              </button>
-            </Link>
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-4">
+          <h1 className="text-bliss-black text-center pt-4 font-bold text-xl">Creator Signup/Login</h1>
+          {/* <Link href="/dashboard">
+            <button className="rounded-full px-8 py-2 bg-bliss-pink text-bliss-white">
+              Dashboard
+            </button>
+          </Link> */}
+          <div className="mt-10">
+            <div className="w-full">
               <label
                 htmlFor="email"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -104,7 +231,14 @@ export default function CreatorSignup() {
                   </div>
                 ) : (
                   <div>
-                    <p>0x00......</p>
+                    <input
+                      id="address"
+                      name="address"
+                      type="text"
+                      disabled={true}
+                      value={ownerAddress}
+                      className="block px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
                   </div>
                 )}
               </div>
@@ -114,33 +248,41 @@ export default function CreatorSignup() {
         {isAuthenticated && (
           <div className="space-y-12 px-8">
             <div className="mt-2">
-              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-4">
+              <div className="mt-10 ">
+                <div className="w-full">
                   <label
                     htmlFor="email"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Enter your age
+                    Enter user name
                   </label>
                   <div className="mt-2">
                     <input
-                      id="age"
-                      name="age"
-                      type="number"
-                      onChange={(e) => setUserDetails(e.target.value)}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      id="name"
+                      name="name"
+                      type="text"
+                      onChange={(e) => handleCreatorDetails("name", e.target.value)}
+                      className="block px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
               </div>
             </div>
-            <input
-              id="ageTwo"
-              name="ageTwo"
-              type="number"
-              onChange={(e) => setAgeNumber(e.target.value)}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            />
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Enter your age
+              </label>
+              <input
+                id="age"
+                name="age"
+                type="age"
+                onChange={(e) => setAgeNumber(e.target.value)}
+                className="block px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
             <div className="mt-2">
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div className="col-span-full">
@@ -186,7 +328,7 @@ export default function CreatorSignup() {
           <div className="mt-6 flex items-center justify-end gap-x-6 px-8">
             <button
               type="submit"
-              onClick={zkProofCall}
+              onClick={handleSubmit}
               className="rounded-full w-32 bg-bliss-pink px-3 py-2 text-sm font-semibold text-bliss-white shadow-sm hover:bg-opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Verify

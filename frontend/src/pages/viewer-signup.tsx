@@ -14,7 +14,7 @@ export default function CreatorSignup() {
     safeSelected,
     chainId,
     logoutWeb3Auth,
-    web3Provider
+    web3Provider,
   } = useAccountAbstraction();
   const [verfiyLoding, setVerifyLoding] = useState(false);
   const [userDetails, setUserDetails] = useState<any>();
@@ -23,12 +23,6 @@ export default function CreatorSignup() {
   const [proof, setProof] = useState("");
   const [signals, setSignals] = useState("");
   const [isValid, setIsValid] = useState(false);
-
-  const prevKey: any = process.env.NEXT_PUBLIC_PRV_KEY;
-  
-  useEffect(() => {
-    console.log("ageVerification", ageVerification);
-  }, [ageVerification])
 
   const makeProof = async (_proofInput: any, _wasm: string, _zkey: string) => {
     const { proof, publicSignals } = await snarkjs.groth16.fullProve(
@@ -81,39 +75,27 @@ export default function CreatorSignup() {
       : setAgeVerification(false);
   }
 
-  const wallet = new Wallet(prevKey);
-  const provider = getDefaultProvider("http://127.0.0.1:8545");
-  const signer: any = wallet.connect(provider);
-  
-  const db = new Database({signer});
-
-  const addDB = async () => {
-    console.log("============", db);
-    // const name = "creatordb_420_26"
-
-    // const { meta } = await db
-    // .prepare(
-    //   "INSERT INTO creatordb_420_26 (wallet, id, age, profile) VALUES ('0x1234', 'alice', 'yes', 'creator');"
-    //   // testing`run` here
-    // )
-    // .run();
-
-    // await meta.txn?.wait();
-
-    // const { meta: insert } = await db.prepare(`INSERT INTO ${name} (wallet, age, profile, id) VALUES ("0x1234", "yes", "creator", "alice");`)
-    // .bind(0, "Bobby Tables")
-    // .run();
-  
-    // Wait for transaction finality
-    // await insert.txn.wait();
-  }
+  // const prevKey: any = process.env.NEXT_PUBLIC_PRV_KEY;
+  // const wallet = new Wallet(prevKey);
+  // const providerData = getDefaultProvider(web3Provider);
+  // const signer: any = wallet.connect(providerData);
+  // const db = new Database({signer});
+  // const addDB = async () => {
+  //   const name = "creator_11155111_189"
+  //   const { meta } = await db
+  //   .prepare(
+  //     `INSERT INTO ${name} (wallet, id, age, profile) VALUES ('0x1234', 'alice', 'yes', 'creator');`
+  //     // testing`run` here
+  //   )
+  //   .run();
+  //   await meta.txn?.wait();
+  // }
 
 
   return (
     <div className="flex justify-center pt-20">
-      <div className="w-[40rem] border border-bliss-grey rounded-xl shadow-xl pb-8">
+      <div className="w-[40rem] bg-white border border-bliss-grey rounded-xl shadow-xl pb-8">
         <div className="space-y-12 px-8 mt-2">
-          <button onClick={addDB}>Click here</button>
           <Link href="/dashboard">
               <button className="rounded-full px-8 py-2 bg-bliss-pink text-bliss-white">
                 Dashboard

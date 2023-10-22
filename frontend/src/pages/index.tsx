@@ -11,8 +11,8 @@ export default function Home() {
           <h1 className="mt-8 max-w-lg text-2xl font-krona tracking-tight text-gray-900 sm:text-4xl">
             Bliss Flix
           </h1>
-          <p className="pt-6 text-3xl">
-            Revolutionizing adult content streaming with ZK{" "}
+          <p className="pt-6 text-2xl">
+            Respect Privacy, Empower Intimacy: Welcome to BlissFlix{" "}
           </p>
           <div className="flex gap-x-6 pt-10">
             <Link href="/creator-signup">
