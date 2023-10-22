@@ -6,8 +6,9 @@ export default function Home() {
   const { handleProfileState } = useUserData();
   return (
     <div className="relative isolate pt-14">
-      <div className="flex flex-col-reverse mx-auto max-w-7xl px-6 py-18 sm:py-24 md:flex-row lg:items-center lg:gap-x-10 lg:px-8 lg:py-24">
-        <div className="mx-auto max-w-2xl lg:mx-0 lg:flex-auto items-center">
+      <div className="flex flex-col-reverse mx-auto max-w-7xl px-6 py-18 sm:py-24 md:flex-row lg:items-center lg:gap-x-10 lg:px-8 lg:py-14">
+        <div className="mx-auto lg:mx-0 flex flex-col lg:flex-row items-center gap-24">
+          <div>
           <h1 className="mt-8 max-w-lg text-2xl font-krona tracking-tight text-gray-900 sm:text-4xl">
             Bliss Flix
           </h1>
@@ -31,6 +32,9 @@ export default function Home() {
                 Viewer
               </button>
             </Link>
+          </div>
+          </div> <div>
+          <img className="h-[300px] lg:h-[500px] w-auto" src="landing.jpeg"/>
           </div>
         </div>
       </div>
