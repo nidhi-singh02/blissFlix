@@ -115,7 +115,6 @@ export default function UploadForm() {
   return (
     <div className="flex justify-center pt-20">
       <div className="w-[40rem] border border-bliss-grey rounded-xl shadow-xl pb-8">
-        <button onClick={() => handleGetData()}>Click</button>
         <div className="space-y-12 px-8">
           <div className="mt-2">
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">

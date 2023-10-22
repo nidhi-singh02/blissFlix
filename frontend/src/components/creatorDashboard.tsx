@@ -11,7 +11,7 @@ export default function CreatorDashboard() {
     <div className="relative">
      <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-        <div className="text-bliss-black flex justify-center pb-14">
+        <div className="text-bliss-black flex justify-center pb-14 pt-4">
             <div>
                 <button onClick={(e) => setState("upload")} className="border border-black px-4 py-2 w-32">Upload</button>
             </div>
