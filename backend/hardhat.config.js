@@ -1,24 +1,30 @@
 require("@nomicfoundation/hardhat-toolbox");
 require('dotenv').config();
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
-
-// Go to https://infura.io, sign up, create a new API key
-// in its dashboard, and replace "KEY" with it
-const INFURA_API_KEY = "KEY";
-const SEPOLIA_PRIVATE_KEY = process.env.SEPOLIA_PRIVATE_KEY;
-const API_URL = process.env.API_URL;
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: "0.8.20",
   networks: {
     sepolia: {
-      url: API_URL,
-      accounts: [SEPOLIA_PRIVATE_KEY]
+      url: process.env.SEPOLIA_API_URL,
+      accounts: [PRIVATE_KEY]
     },
     scroll: {
       url: process.env.SCROLL_API_URL,
-      accounts: [SEPOLIA_PRIVATE_KEY]
+      accounts: [PRIVATE_KEY]
+    },
+    filecoin:{
+      url : process.env.FILECOIN_API_URL,
+      accounts: [PRIVATE_KEY]
+    },
+    mantle : {
+      url : process.env.MANTLE_API_URL,
+      accounts : [PRIVATE_KEY]
+    },
+    goerli: {
+      url: process.env.GOERLI_API_URL,
+      accounts: [PRIVATE_KEY]
     }
   }
 };
