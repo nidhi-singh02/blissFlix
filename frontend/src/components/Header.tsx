@@ -61,7 +61,13 @@ export default function Header() {
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end items-center">
           {!isAuthenticated && <div className="flex items-center gap-x-6">
-          <ConnectWallet/></div>}
+            <button
+              onClick={loginWeb3Auth}
+              className="rounded-full bg-bliss-pink px-3.5 py-2.5 text-sm font-krona text-bliss-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
+            >
+              Connect Wallet
+            </button>
+          </div>}
         </div>
       </nav>
       <Dialog
