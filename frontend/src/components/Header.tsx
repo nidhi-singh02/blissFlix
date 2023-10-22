@@ -4,6 +4,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useAccountAbstraction } from "../components/store/accountAbstractionContext";
 import ConnectedWalletLabel from "../components/Wallet/ConnectedWalletLabel";
 import SafeInfo from "../components/Wallet/SafeInfo";
+import ConnectWallet from "../components/walletConnect";
 import Link from "next/link";
 
 export default function Header() {
@@ -25,11 +26,11 @@ export default function Header() {
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Your Company</span>
-            {/* <img
-              className="h-8 w-auto"
-              src="logo.svg"
-              alt=""
-            /> */}
+            <img
+              className="h-16 w-auto"
+              src="logo.png"
+              alt="Bliss Flix"
+            />
           </Link>
         </div>
         <div className="flex lg:hidden">
@@ -60,12 +61,7 @@ export default function Header() {
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end items-center">
           {!isAuthenticated && <div className="flex items-center gap-x-6">
-          <button
-            onClick={loginWeb3Auth}
-            className="rounded-full bg-bliss-pink px-3.5 py-2.5 text-sm font-krona text-bliss-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
-          >
-            Connect Wallet
-          </button></div>}
+          <ConnectWallet/></div>}
         </div>
       </nav>
       <Dialog

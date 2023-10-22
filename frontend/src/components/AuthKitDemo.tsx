@@ -13,8 +13,7 @@ function classNames(...classes: any) {
 }
 
 const AuthKitDemo = () => {
-  const { loginWeb3Auth, isAuthenticated, safeSelected, chainId, setChainId } = useAccountAbstraction();
-  console.log("chainId", chainId);
+  const { loginWeb3Auth, isAuthenticated, safeSelected, chainId, setChainId } = useAccountAbstraction()
   
   const router: any = useRouter();
   const { ownerAddress } = useAccountAbstraction();

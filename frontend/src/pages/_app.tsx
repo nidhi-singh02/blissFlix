@@ -8,7 +8,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <Providers> 
       <AppContext>
-        <div className="bg-white max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <Header/>
           <Component {...pageProps} />
         </div>
